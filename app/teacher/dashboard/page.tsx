@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
-import { SchoolIcon, ArrowLeftIcon } from '@/components/ui/Icons';
+import { SchoolIcon } from '@/components/ui/Icons';
 import Toast from '@/components/ui/Toast';
 import api from '@/lib/api';
 import { Class, Stream } from '@/lib/types';
@@ -124,18 +124,15 @@ export default function TeacherDashboard() {
                       <SchoolIcon size={32} className="mx-auto text-teal mb-3" />
                       <h4 className="text-lg font-heading font-bold text-navy">{stream.name}</h4>
                       <p className="text-gray-medium font-body text-sm mt-1">
-                       {stream.total_students} students
+                        {stream.total_students} students
                       </p>
                       <Button 
                         className="mt-4 w-full" 
                         variant="primary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSelectStream(stream.id);
-                       }}
-                   >
-                       Enter Votes
-                     </Button>
+                        onClick={() => handleSelectStream(stream.id)}
+                      >
+                        Enter Votes
+                      </Button>
                     </div>
                   </Card>
                 </motion.div>
