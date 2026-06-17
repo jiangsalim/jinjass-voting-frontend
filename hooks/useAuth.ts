@@ -26,14 +26,14 @@ export function useAuth() {
   }
 
   async function login(username: string, password: string) {
-    const user = await loginUser(username, password);
-    setUser(user);
-    if (user.is_admin) {
+    const result = await loginUser(username, password);
+    setUser(result.user);
+    if (result.user.is_admin) {
       router.push('/admin/dashboard');
     } else {
       router.push('/teacher/dashboard');
     }
-    return user;
+    return result;
   }
 
   async function logout() {
