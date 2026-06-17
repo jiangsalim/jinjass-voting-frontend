@@ -1,26 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-navy: #0A1F3F;
+  --color-navy-dark: #06162E;
+  --color-navy-light: #132D52;
+  --color-teal: #00C2BA;
+  --color-teal-dark: #00A8A0;
+  --color-charcoal: #374151;
+  --color-gray-light: #F8F9FA;
+  --color-gray-medium: #9CA3AF;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  body {
+    font-family: var(--font-body);
+    color: var(--color-charcoal);
+    background-color: white;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-navy);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .btn-primary {
+    background-color: var(--color-teal);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-teal-dark);
+    transform: scale(1.05);
+  }
+  .btn-primary:active {
+    transform: scale(0.95);
+  }
+
+  .btn-secondary {
+    border: 2px solid var(--color-navy);
+    color: var(--color-navy);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-navy);
+    color: white;
+    transform: scale(1.05);
+  }
+  .btn-secondary:active {
+    transform: scale(0.95);
+  }
+
+  .btn-outline-light {
+    border: 2px solid white;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .btn-outline-light:hover {
+    background-color: white;
+    color: var(--color-navy);
+  }
+
+  .card {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border: 1px solid #f3f4f6;
+    padding: 1.5rem;
+    transition: box-shadow 0.3s;
+  }
+  .card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: all 0.2s;
+    color: var(--color-charcoal);
+  }
+  .input-field:focus {
+    ring: 2px solid var(--color-teal);
+    border-color: transparent;
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: #d1d5db;
+    transition: all 0.2s;
+  }
+  .sidebar-link:hover {
+    background-color: var(--color-navy-light);
+    color: white;
+  }
+  .sidebar-link.active {
+    background-color: var(--color-teal);
+    color: white;
+  }
+  .sidebar-link.active:hover {
+    background-color: var(--color-teal-dark);
+  }
 }
