@@ -22,8 +22,9 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const user = await login(username, password);
-      if (user.is_admin) {
+      const result = await login(username, password);
+      if (result.user.is_admin) {
+      
         router.push('/admin/dashboard');
       } else {
         router.push('/teacher/dashboard');
