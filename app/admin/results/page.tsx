@@ -11,6 +11,7 @@ import { DownloadIcon } from '@/components/ui/Icons';
 import Toast from '@/components/ui/Toast';
 import api from '@/lib/api';
 import { Election, ElectionResults } from '@/lib/types';
+import { formatEAT } from '@/lib/utils';
 
 export default function ResultsPage() {
   const [elections, setElections] = useState<Election[]>([]);
@@ -84,7 +85,7 @@ export default function ResultsPage() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <h2 className="text-3xl font-heading font-bold text-navy">Results</h2>
         {results && Object.keys(results).length > 0 && (
           <div className="flex gap-3">
@@ -113,12 +114,16 @@ export default function ResultsPage() {
       />
 
       {electionInfo && (
-        <div className="mb-6">
+        <div className="mb-6 space-y-2">
           <span className={`inline-block px-4 py-1 rounded-full text-sm font-body font-semibold ${
             electionInfo.status === 'closed' ? 'bg-teal text-white' : 'bg-green-500 text-white'
           }`}>
             {electionInfo.status === 'closed' ? 'FINAL RESULTS' : 'IN PROGRESS'}
           </span>
+          <p className="text-xs text-gray-medium font-body">
+            Created: {formatEAT(electionInfo.created_at)}
+            {electionInfo.closed_at && ` | Closed: ${formatEAT(electionInfo.closed_at)}`}
+          </p>
         </div>
       )}
 
@@ -134,7 +139,7 @@ export default function ResultsPage() {
               <Card>
                 <h3 className="text-xl font-heading font-bold text-navy mb-4">{position}</h3>
                 {electionInfo?.status === 'closed' && (
-                  <div className="mb-4 flex gap-2">
+                  <div className="mb-4 flex flex-wrap gap-2">
                     {candidates.filter(c => c.rank === 1).map(c => (
                       <span key={c.candidate_id} className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-body font-semibold">
                         Winner: {c.candidate_name}

@@ -88,7 +88,7 @@ export default function CandidatesPage() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <h2 className="text-3xl font-heading font-bold text-navy">Candidates</h2>
         <Button onClick={() => setShowForm(!showForm)} disabled={!selectedPosition}>
           <span className="flex items-center gap-2"><PlusIcon size={18} />Add Candidate</span>

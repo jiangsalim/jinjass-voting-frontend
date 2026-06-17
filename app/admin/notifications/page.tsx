@@ -9,6 +9,18 @@ import Toast from '@/components/ui/Toast';
 import api from '@/lib/api';
 import { Notification } from '@/lib/types';
 
+function formatEAT(dateString: string): string {
+  return new Date(dateString).toLocaleString('en-UG', {
+    timeZone: 'Africa/Kampala',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,7 +118,7 @@ export default function NotificationsPage() {
                         Attempted: {notification.attempted_total} / Max: {notification.max_allowed}
                       </p>
                       <p className="text-xs text-gray-medium font-body mt-1">
-                        {new Date(notification.created_at).toLocaleString()}
+                        {formatEAT(notification.created_at)}
                       </p>
                     </div>
                   </div>

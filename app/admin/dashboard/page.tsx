@@ -11,6 +11,7 @@ import { ElectionIcon, SchoolIcon, UsersIcon, ChartIcon } from '@/components/ui/
 import api from '@/lib/api';
 import { SystemSettings, ElectionResults } from '@/lib/types';
 import Toast from '@/components/ui/Toast';
+import { formatEAT } from '@/lib/utils';
 
 export default function AdminDashboard() {
   const [settings, setSettings] = useState<SystemSettings | null>(null);
@@ -24,50 +25,48 @@ export default function AdminDashboard() {
   }, []);
 
   async function fetchData() {
-  try {
-    const settingsRes = await api.get('/api/settings');
-    const settingsData = settingsRes.data;
-    setSettings(settingsData);
+    try {
+      const settingsRes = await api.get('/api/settings');
+      const settingsData = settingsRes.data;
+      setSettings(settingsData);
 
-    if (settingsData.current_election) {
-      const resultsRes = await api.get(`/api/results?election_id=${settingsData.current_election.id}`);
-      setResults(resultsRes.data.results);
+      if (settingsData.current_election) {
+        const resultsRes = await api.get(`/api/results?election_id=${settingsData.current_election.id}`);
+        setResults(resultsRes.data.results);
 
-      // Get classes
-      const classesRes = await api.get(`/api/classes?election_id=${settingsData.current_election.id}`);
-      const classList = classesRes.data.classes;
+        const classesRes = await api.get(`/api/classes?election_id=${settingsData.current_election.id}`);
+        const classList = classesRes.data.classes;
 
-      // Get all streams and their IDs for this election
-      let totalStreams = 0;
-      const electionStreamIds: number[] = [];
-      for (const c of classList) {
-        const streamsRes = await api.get(`/api/streams?class_id=${c.id}`);
-        const streamList = streamsRes.data.streams;
-        totalStreams += streamList.length;
-        for (const s of streamList) {
-          electionStreamIds.push(s.id);
+        let totalStreams = 0;
+        const electionStreamIds: number[] = [];
+        for (const c of classList) {
+          const streamsRes = await api.get(`/api/streams?class_id=${c.id}`);
+          const streamList = streamsRes.data.streams;
+          totalStreams += streamList.length;
+          for (const s of streamList) {
+            electionStreamIds.push(s.id);
+          }
         }
+
+        const submissionsRes = await api.get('/api/votes/submissions');
+        const submittedCount = submissionsRes.data.submissions.filter(
+          (s: any) => electionStreamIds.includes(s.stream_id)
+        ).length;
+
+        setStats({
+          classes: classList.length,
+          streams: totalStreams,
+          submitted: submittedCount,
+          total: totalStreams,
+        });
       }
-
-      // Count submitted streams (only those in this election)
-      const submissionsRes = await api.get('/api/votes/submissions');
-      const submittedCount = submissionsRes.data.submissions.filter(
-        (s: any) => electionStreamIds.includes(s.stream_id)
-      ).length;
-
-      setStats({
-        classes: classList.length,
-        streams: totalStreams,
-        submitted: submittedCount,
-        total: totalStreams,
-      });
+    } catch (err) {
+      console.error('Failed to fetch data:', err);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Failed to fetch data:', err);
-  } finally {
-    setLoading(false);
   }
-}
+
   async function handleToggleVoting() {
     try {
       const res = await api.post('/api/settings/toggle-voting');
@@ -77,7 +76,7 @@ export default function AdminDashboard() {
         message: res.data.message || 'Voting status updated',
         type: 'success',
       });
-      fetchData(); // Refresh results
+      fetchData();
     } catch (err: any) {
       setToast({
         show: true,
@@ -100,8 +99,7 @@ export default function AdminDashboard() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h2 className="text-3xl font-heading font-bold text-navy">Dashboard</h2>
           {settings?.current_election && (
@@ -113,10 +111,8 @@ export default function AdminDashboard() {
         <VotingToggle isOpen={settings?.voting_open || false} onToggle={handleToggleVoting} />
       </div>
 
-      {/* Stats */}
       <StatsCards stats={dashboardStats} />
 
-      {/* Results Section */}
       {results && (
         <div className="mt-8">
           <h3 className="text-2xl font-heading font-bold text-navy mb-6">
@@ -156,7 +152,7 @@ export default function AdminDashboard() {
       {!settings?.current_election && (
         <Card className="mt-8">
           <p className="text-gray-medium font-body text-center py-8">
-            No active election. Create an election to get started.
+            No active election. Create and activate an election to get started.
           </p>
         </Card>
       )}

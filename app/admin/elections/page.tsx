@@ -9,6 +9,7 @@ import { PlusIcon, TrashIcon, CheckIcon, CloseIcon } from '@/components/ui/Icons
 import Toast from '@/components/ui/Toast';
 import api from '@/lib/api';
 import { Election } from '@/lib/types';
+import { formatEAT } from '@/lib/utils';
 
 export default function ElectionsPage() {
   const [elections, setElections] = useState<Election[]>([]);
@@ -49,7 +50,6 @@ export default function ElectionsPage() {
 
   async function handleActivate(id: number) {
     try {
-      // Set as current election and mark active
       await api.put('/api/settings/current-election', { election_id: id });
       showToast('Election activated', 'success');
       fetchElections();
@@ -62,7 +62,6 @@ export default function ElectionsPage() {
     if (!confirm('Close this election? Results will be finalized.')) return;
     try {
       await api.put(`/api/elections/${id}`, { status: 'closed' });
-      // Also close voting if this is the current election
       await api.post('/api/settings/toggle-voting');
       showToast('Election closed and moved to results', 'success');
       fetchElections();
@@ -105,7 +104,6 @@ export default function ElectionsPage() {
         </Button>
       </div>
 
-      {/* Create Form */}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -143,7 +141,6 @@ export default function ElectionsPage() {
         )}
       </AnimatePresence>
 
-      {/* Elections List */}
       <div className="space-y-4">
         {elections.length === 0 ? (
           <Card>
@@ -160,7 +157,7 @@ export default function ElectionsPage() {
               transition={{ delay: idx * 0.05 }}
             >
               <Card className={`${election.status === 'active' ? 'border-l-4 border-l-teal' : 'border-l-4 border-l-gray-300'}`}>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <h4 className="text-lg font-heading font-bold text-navy">{election.title}</h4>
                     <p className="text-gray-medium font-body text-sm">
@@ -173,10 +170,12 @@ export default function ElectionsPage() {
                         {election.status.toUpperCase()}
                       </span>
                     </p>
+                    <p className="text-xs text-gray-medium font-body mt-1">
+                      Created: {formatEAT(election.created_at)}
+                    </p>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     {election.status === 'closed' && (
                       <Button
                         variant="primary"

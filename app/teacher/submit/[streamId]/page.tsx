@@ -10,6 +10,7 @@ import { ArrowLeftIcon } from '@/components/ui/Icons';
 import Toast from '@/components/ui/Toast';
 import api from '@/lib/api';
 import { Position, Candidate } from '@/lib/types';
+import { formatEAT } from '@/lib/utils';
 
 export default function SubmitVotesPage() {
   const params = useParams();
@@ -30,7 +31,6 @@ export default function SubmitVotesPage() {
 
   async function fetchData() {
     try {
-      // Get settings for current election
       const settingsRes = await api.get('/api/settings');
       if (!settingsRes.data.current_election) {
         showToast('No active election', 'error');
@@ -38,11 +38,9 @@ export default function SubmitVotesPage() {
         return;
       }
 
-      // Get stream info (from available streams endpoint or direct)
       const positionsRes = await api.get(`/api/positions?election_id=${settingsRes.data.current_election.id}`);
       setPositions(positionsRes.data.positions);
 
-      // Fetch candidates for all positions
       const allCandidates: Candidate[] = [];
       for (const pos of positionsRes.data.positions) {
         const candRes = await api.get(`/api/candidates?position_id=${pos.id}`);
@@ -50,7 +48,6 @@ export default function SubmitVotesPage() {
       }
       setCandidates(allCandidates);
 
-      // Initialize votes
       const initialVotes: Record<number, string> = {};
       allCandidates.forEach(c => { initialVotes[c.id] = ''; });
       setVotes(initialVotes);
@@ -96,7 +93,6 @@ export default function SubmitVotesPage() {
     );
   }
 
-  // Group candidates by position
   const candidatesByPosition: Record<number, Candidate[]> = {};
   candidates.forEach(c => {
     if (!candidatesByPosition[c.position_id]) {
@@ -107,7 +103,6 @@ export default function SubmitVotesPage() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      {/* Back button */}
       <button
         onClick={() => router.push('/teacher/dashboard')}
         className="flex items-center gap-2 text-navy hover:text-teal transition-colors font-body mb-6"
