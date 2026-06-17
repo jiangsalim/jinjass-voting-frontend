@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-export const Metadata: Metadata = {
+export const metadata: Metadata = {
   title: "JinjaSS Voting Portal",
   description: "School Election Voting Portal",
   icons: {
