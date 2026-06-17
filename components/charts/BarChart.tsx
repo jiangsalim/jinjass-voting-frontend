@@ -36,7 +36,7 @@ export default function BarChart({ data, positionName }: BarChartProps) {
               borderRadius: '8px',
               fontFamily: 'Inter, sans-serif',
             }}
-            formatter={(value: number) => [`${value} votes`, 'Total']}
+            formatter={(value: any) => [`${value} votes`, 'Total']}
           />
           <Bar dataKey="votes" radius={[8, 8, 0, 0]} maxBarSize={60}>
             {chartData.map((entry, index) => (
